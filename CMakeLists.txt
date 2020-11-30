@@ -7,8 +7,8 @@ SET(CMAKE_SYSROOT /opt/arm-linux-gnuabi-sysroot)
 SET(LINKER_PATH /opt/local/bin/arm-none-linux-gnueabi-ld)
 # /opt/clang+llvm-11.0.0-x86_64-apple-darwin/bin/ld.lld
 
-set(CMAKE_C_COMPILER clang-mp-10)
-set(CMAKE_CXX_COMPILER clang++-mp-10)
+set(CMAKE_C_COMPILER clang-mp-devel)
+set(CMAKE_CXX_COMPILER clang++-mp-devel)
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fuse-ld=${LINKER_PATH}")
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
