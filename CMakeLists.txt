@@ -12,5 +12,5 @@ add_compile_options(-ggdb3 -Og -Wall -Wextra)
 add_compile_options(-m32)
 add_link_options(-m32)
 
-file(GLOB SOURCES src/*.c)
-add_executable(${PROJECT_NAME} ${SOURCES})
+add_executable(reboot ch3/reboot.c)
+add_executable(open ch4/open.c)
