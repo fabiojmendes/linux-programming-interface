@@ -6,7 +6,7 @@
 
 int main(int argc, char **argv) {
   if (argc < 2) {
-    fprintf(stderr, "Pass at least one file\n",);
+    fprintf(stderr, "Pass at least one file\n");
     exit(EXIT_FAILURE);
   }
 
