@@ -4,7 +4,7 @@
 #include <sys/fcntl.h>
 #include <unistd.h>
 
-#define BUFF_SIZE 23
+#define BUFF_SIZE 256
 
 void fatal(char* msg) {
   perror(msg);
@@ -34,18 +34,33 @@ int main(int argc, char** argv) {
     if (n == 0) break;
 
     off_t seek = 0;
+    off_t wpos = -1;
+    size_t writes = 0;
     for (int i = 0; i < n; i++) {
       if (buff[i] == 0) {
+        if (writes != 0) {
+          write(dst, &buff[wpos], writes);
+          writes = 0;
+          wpos = -1;
+        }
         seek++;
       } else {
         if (seek != 0) {
           lseek(dst, seek, SEEK_CUR);
           seek = 0;
         }
-        write(dst, &buff[i], 1);
+        if (wpos == -1) {
+          wpos = i;
+        }
+        writes++;
       }
     }
-    lseek(dst, seek, SEEK_CUR);
+
+    if (writes > 0) {
+      write(dst, &buff[wpos], writes);
+    } else {
+      lseek(dst, seek, SEEK_CUR);
+    }
   }
 
   close(src);
