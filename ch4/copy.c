@@ -1,7 +1,7 @@
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/fcntl.h>
+#include <fcntl.h>
 #include <unistd.h>
 
 #define BUFF_SIZE 256
