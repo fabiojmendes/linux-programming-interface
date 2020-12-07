@@ -44,7 +44,7 @@ int main(int argc, char* argv[]) {
     vector[i] = (struct iovec){.iov_base = argv[j], .iov_len = strlen(argv[j])};
   }
 
-  ssize_t bytes = my_writev(fd, vector, 3);
+  ssize_t bytes = my_writev(fd, vector, buffers);
   printf("%zd bytes written\n", bytes);
 
   free(vector);
