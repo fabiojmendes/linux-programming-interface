@@ -12,14 +12,16 @@ add_compile_options(-ggdb3 -Og -Wall -Wextra)
 add_compile_options(-m32)
 add_link_options(-m32)
 
-# ch3
-add_executable(reboot ch3/reboot.c)
+function(add_source)
+    foreach(file_path IN LISTS ARGV)
+        string(REPLACE ".c" "" new_name ${file_path} )
+        get_filename_component(filename ${new_name} NAME)
+        add_executable(${filename} ${file_path} )
+    endforeach()
+endfunction()
 
-# ch4
-add_executable(open ch4/open.c)
-add_executable(tee ch4/tee.c)
-add_executable(copy ch4/copy.c)
-
-# ch5
-add_executable(large_files ch5/large_files.c)
-target_compile_definitions(large_files PRIVATE _FILE_OFFSET_BITS=64)
+# Add all submodules
+file(GLOB modules "ch*")
+foreach(mod ${modules})
+    add_subdirectory(${mod})
+endforeach()
