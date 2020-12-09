@@ -6,7 +6,7 @@ set(CMAKE_C_STANDARD 11)
 project(hello-linux)
 
 add_compile_definitions(DEBUG)
-add_compile_options(-ggdb3 -Og -Wall -Wextra)
+add_compile_options(-ggdb3 -O0 -Wall -Wextra)
 
 # Build 32 bits
 add_compile_options(-m32)
