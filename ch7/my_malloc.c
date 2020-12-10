@@ -5,8 +5,6 @@
 #include <string.h>
 #include <unistd.h>
 
-#define MIN_INC 64
-
 struct node {
   size_t size;
   struct node *prev;
@@ -14,31 +12,20 @@ struct node {
   int used;
 };
 
-extern char end;
-
 struct node *head = NULL;
 
 struct node *allocate(struct node *prev, size_t size) {
-  struct node *new;
-  if (prev == NULL) {
-    new = sbrk(0);
-    head = new;
-  } else {
-    new = (void *)(prev + 1) + prev->size;
+  struct node *new = sbrk(sizeof(struct node) + size);
+  if (new == (void *)-1) {
+    perror("error allocating more memory");
+    exit(1);
+  }
+
+  *new = (struct node){.prev = prev, .size = size};
+  if (prev != NULL) {
     prev->next = new;
   }
 
-  void *buff = new + 1;
-  int inc = (buff + size) - sbrk(0);
-  if (inc > 0) {
-    inc = inc > MIN_INC ? inc : MIN_INC;
-    void *res = sbrk(inc);
-    if (res == (void *)-1) {
-      perror("error allocating more memory");
-      exit(1);
-    }
-  }
-  *new = (struct node){.prev = prev, .size = size, .used = 1};
   return new;
 }
 
@@ -57,6 +44,10 @@ void *my_malloc(size_t size) {
   }
 
   struct node *new = allocate(last, size);
+  new->used = 1;
+  if (head == NULL) {
+    head = new;
+  }
   void *buff = new + 1;
   ((char *)buff)[size - 1] = 0xea;
   return buff;
@@ -67,14 +58,17 @@ void my_free(void *ptr) {
   itr->used = 0;
 }
 
-int main() {
-  for (int i = 0; i < 1024; i++) {
-    size_t str_size = 15; // +
-    char *str = my_malloc(str_size + 1);
-    memset(str, 'A', str_size);
-    str[str_size] = '\0';
+int main(int argc, char *argv[]) {
+  size_t str_size = argc > 1 ? atoi(argv[1]) : 16;
+  int strings = argc > 2 ? atoi(argv[2]) : 1024;
+
+  for (int i = 0; i < strings; i++) {
+    char *str = my_malloc(str_size);
+    memset(str, 'A', str_size - 1);
+    str[str_size - 1] = '\0';
 
     write(STDOUT_FILENO, str, str_size);
+    my_free(str);
   }
 
   return EXIT_SUCCESS;
