@@ -14,7 +14,7 @@ struct node {
 
 struct node *head = NULL;
 
-struct node *allocate(struct node *prev, size_t size) {
+struct node *my_allocate(struct node *prev, size_t size) {
   struct node *new = sbrk(sizeof(struct node) + size);
   if (new == (void *)-1) {
     perror("error allocating more memory");
@@ -43,7 +43,7 @@ void *my_malloc(size_t size) {
     last = itr;
   }
 
-  struct node *new = allocate(last, size);
+  struct node *new = my_allocate(last, size);
   new->used = 1;
   if (head == NULL) {
     head = new;
@@ -54,8 +54,21 @@ void *my_malloc(size_t size) {
 }
 
 void my_free(void *ptr) {
-  struct node *itr = (struct node *)ptr - 1;
-  itr->used = 0;
+  struct node *node = (struct node *)ptr - 1;
+  node->used = 0;
+  if (ptr + node->size == sbrk(0)) {
+    struct node *last_used = node;
+    while (!last_used->used) {
+      if (last_used == head) {
+        head = NULL;
+        brk(last_used);
+        return;
+      }
+      last_used = last_used->prev;
+    }
+    brk(last_used->next);
+    last_used->next = NULL;
+  }
 }
 
 int main(int argc, char *argv[]) {
@@ -64,8 +77,8 @@ int main(int argc, char *argv[]) {
 
   for (int i = 0; i < strings; i++) {
     char *str = my_malloc(str_size);
-    memset(str, 'A', str_size - 1);
-    str[str_size - 1] = '\0';
+    memset(str, 'A' + (i % 26), str_size - 1);
+    str[str_size - 1] = '\n';
 
     write(STDOUT_FILENO, str, str_size);
     my_free(str);
