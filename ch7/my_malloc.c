@@ -22,19 +22,22 @@ struct node *my_allocate(struct node *prev, size_t size) {
   }
 
   *new = (struct node){.prev = prev, .size = size};
-  if (prev != NULL) {
-    prev->next = new;
-  }
+  prev->next = new;
 
   return new;
 }
 
 void *my_malloc(size_t size) {
+  if (head == NULL) {
+    static struct node n = {.size = 0, .used = 1};
+    head = &n;
+  }
+
   if (size % 16 != 0) {
     size += 16 - size % 16;
   }
 
-  struct node *last = NULL;
+  struct node *last;
   for (struct node *itr = head; itr; itr = itr->next) {
     if (itr->size >= size && !itr->used) {
       itr->used = 1;
@@ -45,9 +48,6 @@ void *my_malloc(size_t size) {
 
   struct node *new = my_allocate(last, size);
   new->used = 1;
-  if (head == NULL) {
-    head = new;
-  }
   void *buff = new + 1;
   ((char *)buff)[size - 1] = 0xea;
   return buff;
@@ -59,11 +59,6 @@ void my_free(void *ptr) {
   if (ptr + node->size == sbrk(0)) {
     struct node *last_used = node;
     while (!last_used->used) {
-      if (last_used == head) {
-        head = NULL;
-        brk(last_used);
-        return;
-      }
       last_used = last_used->prev;
     }
     brk(last_used->next);
