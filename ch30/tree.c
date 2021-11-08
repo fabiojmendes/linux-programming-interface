@@ -152,6 +152,21 @@ void del(struct tree *tree, int key) {
   }
 }
 
+void destroy_nodes(struct node *node) {
+  if (node->left) {
+    destroy_nodes(node->left);
+  }
+  if (node->right) {
+    destroy_nodes(node->right);
+  }
+  free(node);
+}
+
+void destroy(struct tree *tree) {
+  destroy_nodes(tree->root);
+  tree->root = NULL;
+}
+
 int main() {
   struct tree tree = {};
 
@@ -169,4 +184,6 @@ int main() {
   printf("After deleting key\n");
 
   print_tree(&tree);
+
+  destroy(&tree);
 }
