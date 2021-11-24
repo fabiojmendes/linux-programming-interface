@@ -37,5 +37,5 @@ int main() {
   mq_close(q);
   mq_unlink(QUEUE_NAME);
 
-  return 0;
+  return EXIT_SUCCESS;
 }

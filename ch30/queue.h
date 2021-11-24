@@ -1,3 +1,5 @@
+#pragma once
+
 struct queue {
   int front, rear;
   void **data;

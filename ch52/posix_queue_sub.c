@@ -32,5 +32,5 @@ int main() {
     printf("Message received: [%d: %d %s]\n", msg.seq, msg.temp, msg.data);
   }
 
-  return 0;
+  return EXIT_SUCCESS;
 }
