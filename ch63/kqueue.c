@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <sys/_types/_ssize_t.h>
 #include <sys/ev.h>
 #include <sys/event.h>
 #include <sys/fcntl.h>
@@ -52,7 +53,10 @@ int main(int argc, char *argv[]) {
 
       if (e.flags & EV_RE) {
         ssize_t bytes = read(e.ident, buf, BUF_SIZE);
-        write(STDOUT_FILENO, buf, bytes);
+        ssize_t written = write(STDOUT_FILENO, buf, bytes);
+        if (written != bytes) {
+          fatal("partial write");
+        }
       }
     }
   }
