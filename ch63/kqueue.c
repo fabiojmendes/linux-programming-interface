@@ -35,7 +35,7 @@ int main(int argc, char *argv[]) {
 
   int kq = kqueue();
   if (kq == -1) {
-    fatal("creating queue");
+    fatal("queue");
   }
 
   char buf[BUF_SIZE];
